@@ -9,9 +9,9 @@ void init_board(Board *board) {
       board->grid[y][x] = EMPTY;
       if ((x + y) % 2 != 0) {
         if (y < 3) {
-          board->grid[y][x] = BLACK;
-        } else if (y > 4) {
           board->grid[y][x] = WHITE;
+        } else if (y > 4) {
+          board->grid[y][x] = BLACK;
         }
       }
     }
