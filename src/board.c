@@ -37,10 +37,10 @@ void print_board(const Board *board) {
       Piece piece = board->grid[y][x];
       switch (piece) {
       case WHITE:
-        printf("\033[38;5;15m ●");
+        printf("\033[38;5;15m ● ");
         break;
       case BLACK:
-        printf("\033[38;5;160m ●");
+        printf("\033[38;5;160m ● ");
         break;
       default:
         printf("   ");
