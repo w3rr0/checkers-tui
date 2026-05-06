@@ -1,6 +1,7 @@
 #include "board.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 void init_board(Board *board) {
   board->white_turn = true;
@@ -50,4 +51,51 @@ void print_board(const Board *board) {
     }
     printf("\n");
   }
+}
+
+[[nodiscard]] bool _is_on_board(Coordinate cord) {
+  return cord.x >= 0 && cord.x < BOARD_SIZE && cord.y >= 0 &&
+         cord.y < BOARD_SIZE;
+}
+
+bool execute_move(Board *board, Move move) {
+  // Check voordinates
+  if (!_is_on_board(move.from) || !_is_on_board(move.to)) {
+    return false;
+  }
+
+  Piece actor = board->grid[move.from.y][move.from.x];
+  Piece target = board->grid[move.to.y][move.to.x];
+
+  // Check pawn from
+  if (actor == EMPTY) {
+    return false;
+  }
+  if (board->white_turn && actor != WHITE) {
+    return false;
+  }
+  if (!board->white_turn && actor != BLACK) {
+    return false;
+  }
+
+  // Check target field
+  if (target != EMPTY) {
+    return false;
+  }
+
+  // Check diagonal movement
+  int dx = abs(move.from.x - move.to.x);
+  int dy = abs(move.from.y - move.to.y);
+  if (dx != dy) {
+    return false;
+  }
+
+  // Execute move
+  board->grid[move.to.y][move.to.x] = actor;
+  board->grid[move.from.y][move.from.x] = EMPTY;
+
+  // Change turn
+  board->white_turn = !board->white_turn;
+
+  return true;
 }
