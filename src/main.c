@@ -35,7 +35,7 @@ Move get_user_move() {
     if (assigned == 4) {
       break;
     }
-    printf("\033[31mWrong move! Please try again\033[0m\n");
+    printf("\033[31mWrong format! Please enter correct move\033[0m\n");
 
     while (getchar() != '\n')
       ;
