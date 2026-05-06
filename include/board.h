@@ -13,7 +13,18 @@ typedef struct {
   bool white_turn;
 } Board;
 
+typedef struct {
+  uint8_t x;
+  uint8_t y;
+} Coordinate;
+
+typedef struct {
+  Coordinate from;
+  Coordinate to;
+} Move;
+
 void init_board(Board *board);
 void print_board(const Board *board);
+bool execute_move(Board *board, Move move);
 
 #endif // BOARD_H
