@@ -1,4 +1,5 @@
 #include "board.h"
+#include "pawn.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,12 +8,12 @@ void init_board(Board *board) {
   board->white_turn = true;
   for (int y = 0; y < BOARD_SIZE; y++) {
     for (int x = 0; x < BOARD_SIZE; x++) {
-      board->grid[y][x] = EMPTY;
+      board->grid[y][x] = (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
       if ((x + y) % 2 != 0) {
         if (y < 3) {
-          board->grid[y][x] = WHITE;
+          board->grid[y][x] = (Piece){.color = WHITE, .type = PAWN};
         } else if (y > 4) {
-          board->grid[y][x] = BLACK;
+          board->grid[y][x] = (Piece){.color = BLACK, .type = PAWN};
         }
       }
     }
@@ -35,8 +36,8 @@ void print_board(const Board *board) {
         printf("\033[48;5;235m");
       }
 
-      Piece piece = board->grid[y][x];
-      switch (piece) {
+      auto piece_col = board->grid[y][x].color;
+      switch (piece_col) {
       case WHITE:
         printf("\033[38;5;15m ● ");
         break;
@@ -64,22 +65,22 @@ bool execute_move(Board *board, Move move) {
     return false;
   }
 
-  Piece actor = board->grid[move.from.y][move.from.x];
-  Piece target = board->grid[move.to.y][move.to.x];
+  auto actor = board->grid[move.from.y][move.from.x];
+  auto target = board->grid[move.to.y][move.to.x];
 
   // Check pawn from
-  if (actor == EMPTY) {
+  if (actor.type == EMPTY_TYP) {
     return false;
   }
-  if (board->white_turn && actor != WHITE) {
+  if (board->white_turn && actor.color != WHITE) {
     return false;
   }
-  if (!board->white_turn && actor != BLACK) {
+  if (!board->white_turn && actor.color != BLACK) {
     return false;
   }
 
   // Check target field
-  if (target != EMPTY) {
+  if (target.type != EMPTY_TYP) {
     return false;
   }
 
@@ -94,29 +95,30 @@ bool execute_move(Board *board, Move move) {
   }
 
   // direction of movement
-  if (actor == WHITE && move.from.y >= move.to.y) {
+  if (actor.color == WHITE && move.from.y >= move.to.y) {
     return false;
   }
-  if (actor == BLACK && move.from.y <= move.to.y) {
+  if (actor.color == BLACK && move.from.y <= move.to.y) {
     return false;
   }
 
   if (dx == 2) {
     int mid_x = (move.from.x + move.to.x) / 2;
     int mid_y = (move.from.y + move.to.y) / 2;
-    Piece mid_piece = board->grid[mid_y][mid_x];
+    auto mid_piece = board->grid[mid_y][mid_x];
 
-    if (mid_piece == EMPTY || mid_piece == actor) {
+    if (mid_piece.type == EMPTY_TYP || mid_piece.color == actor.color) {
       return false;
     }
 
     // capturing successful
-    board->grid[mid_y][mid_x] = EMPTY;
+    board->grid[mid_y][mid_x] = (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
   }
 
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
-  board->grid[move.from.y][move.from.x] = EMPTY;
+  board->grid[move.from.y][move.from.x] =
+      (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
 
   // Change turn
   board->white_turn = !board->white_turn;

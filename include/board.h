@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-constexpr uint8_t BOARD_SIZE = 8;
+#include "pawn.h"
 
-typedef enum : uint8_t { EMPTY = 0, WHITE, BLACK } Piece;
+constexpr uint8_t BOARD_SIZE = 8;
 
 typedef struct {
   Piece grid[BOARD_SIZE][BOARD_SIZE];
