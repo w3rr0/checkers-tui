@@ -13,5 +13,8 @@ $(TARGET): $(SRCS)
 run: all
 	./$(TARGET)
 
+test: all
+	./$(TARGET) < moves.txt
+
 clean:
 	rm -f $(TARGET)
