@@ -36,19 +36,37 @@ void print_board(const Board *board) {
         printf("\033[48;5;235m");
       }
 
-      auto piece_col = board->grid[y][x].color;
-      switch (piece_col) {
+      char *color_code;
+      char *piece_symbol;
+
+      auto piece = board->grid[y][x];
+
+      switch (piece.color) {
       case WHITE:
-        printf("\033[38;5;15m ● ");
+        color_code = white_color_code;
         break;
       case BLACK:
-        printf("\033[38;5;160m ● ");
+        color_code = black_color_code;
         break;
       default:
-        printf("   ");
+        color_code = "";
         break;
       }
-      printf("\033[0m");
+
+      switch (piece.type) {
+      case PAWN:
+        piece_symbol = pawn_symbol;
+        break;
+      case QUEEN:
+        piece_symbol = queen_symbol;
+        break;
+      default:
+        piece_symbol = empty_symbol;
+        break;
+      }
+
+      printf("%s%s", color_code, piece_symbol);
+      printf("%s", reset_color);
     }
     printf("\n");
   }
@@ -118,6 +136,15 @@ bool execute_move(Board *board, Move move) {
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
   board->grid[move.from.y][move.from.x] = PIECE_EMPTY;
+
+  // check for queen trannformation
+  if (actor.type == PAWN) {
+    if (actor.color == WHITE && move.to.y == BOARD_SIZE - 1) {
+      make_queen(&board->grid[move.to.y][move.to.x]);
+    } else if (actor.color == BLACK && move.to.y == 0) {
+      make_queen(&board->grid[move.to.y][move.to.x]);
+    }
+  }
 
   // Change turn
   board->white_turn = !board->white_turn;
