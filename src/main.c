@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdio.h>
 
 #include "board.h"
@@ -9,20 +10,35 @@ Move get_user_move() {
   printf("Enter your move: ");
 
   while (true) {
-    if (scanf("%c%d %c%d", &col_from, &row_from, &col_to, &row_to) == 4) {
+    int assigned = scanf(" %c%d %c%d", &col_from, &row_from, &col_to, &row_to);
+    if (assigned == 4) {
       break;
     }
+    printf("\033[31mWrong move! Please try again\033[0m\n");
+
+    while (getchar() != '\n')
+      ;
   }
 
-  return (Move){.from = {.x = col_from - 'A', .y = row_from - 1},
-                .to = {.x = col_to - 'A', .y = row_to - 1}};
+  return (Move){.from = {.x = toupper(col_from) - 'A', .y = row_from - 1},
+                .to = {.x = toupper(col_to) - 'A', .y = row_to - 1}};
 }
 
 int main(void) {
   Board board = {};
   init_board(&board);
-  print_board(&board);
 
-  printf("Turn: %s\n", board.white_turn ? "WHITE" : "BLACK");
+  while (true) {
+    print_board(&board);
+    printf("Turn: %s\n", board.white_turn ? "WHITE" : "BLACK");
+
+    auto m = get_user_move();
+
+    if (!execute_move(&board, m)) {
+      printf("\033[31mWrong move! Please try again\033[0m\n");
+      continue;
+    }
+  }
+
   return 0;
 }
