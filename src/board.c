@@ -117,8 +117,7 @@ bool execute_move(Board *board, Move move) {
 
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
-  board->grid[move.from.y][move.from.x] =
-      (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
+  board->grid[move.from.y][move.from.x] = PIECE_EMPTY;
 
   // Change turn
   board->white_turn = !board->white_turn;
