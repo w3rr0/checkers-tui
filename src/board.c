@@ -8,7 +8,7 @@ void init_board(Board *board) {
   board->white_turn = true;
   for (int y = 0; y < BOARD_SIZE; y++) {
     for (int x = 0; x < BOARD_SIZE; x++) {
-      board->grid[y][x] = (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
+      board->grid[y][x] = PIECE_EMPTY;
       if ((x + y) % 2 != 0) {
         if (y < 3) {
           board->grid[y][x] = (Piece){.color = WHITE, .type = PAWN};
@@ -112,7 +112,7 @@ bool execute_move(Board *board, Move move) {
     }
 
     // capturing successful
-    board->grid[mid_y][mid_x] = (Piece){.color = EMPTY_COL, .type = EMPTY_TYP};
+    board->grid[mid_y][mid_x] = PIECE_EMPTY;
   }
 
   // Execute move
