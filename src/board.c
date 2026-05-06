@@ -89,6 +89,30 @@ bool execute_move(Board *board, Move move) {
   if (dx != dy) {
     return false;
   }
+  if (dx != 1 && dx != 2) { // 1 -> regular move, 2 -> capture pawn
+    return false;
+  }
+
+  // direction of movement
+  if (actor == WHITE && move.from.y >= move.to.y) {
+    return false;
+  }
+  if (actor == BLACK && move.from.y <= move.to.y) {
+    return false;
+  }
+
+  if (dx == 2) {
+    int mid_x = (move.from.x + move.to.x) / 2;
+    int mid_y = (move.from.y + move.to.y) / 2;
+    Piece mid_piece = board->grid[mid_y][mid_x];
+
+    if (mid_piece == EMPTY || mid_piece == actor) {
+      return false;
+    }
+
+    // capturing successful
+    board->grid[mid_y][mid_x] = EMPTY;
+  }
 
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
