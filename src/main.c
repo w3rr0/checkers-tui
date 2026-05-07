@@ -11,7 +11,15 @@ int main(void) {
 
   while (true) {
     print_board(&board);
-    printf("Turn: %s\n", board.white_turn ? "WHITE" : "BLACK");
+
+    // Check for win
+    if (board.white_pieces == 0) {
+      printf("BLACK WINS!");
+    } else if (board.black_pieces == 0) {
+      printf("WHITE WINS!");
+    } else {
+      printf("Turn: %s\n", board.white_turn ? "WHITE" : "BLACK");
+    }
 
     auto m = get_user_move();
 
