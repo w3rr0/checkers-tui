@@ -137,6 +137,36 @@ bool execute_move(Board *board, Move move) {
     board->grid[mid_y][mid_x] = PIECE_EMPTY;
   }
 
+  if (actor.type == QUEEN) {
+    Coordinate current = {.x = move.from.x, .y = move.from.y};
+    auto piece_seen = false;
+    Coordinate piece_cord;
+
+    int step_x = (move.to.x > move.from.x) - (move.to.x < move.from.x);
+    int step_y = (move.to.y > move.from.y) - (move.to.y < move.from.y);
+
+    while (!match_coordinates(current, move.to)) {
+      // Next field
+      current.x += step_x;
+      current.y += step_y;
+
+      auto type = board->grid[current.y][current.x].type;
+      if (type != EMPTY_TYP) {
+        if (!piece_seen) {
+          piece_seen = true;
+          piece_cord = current;
+        } else {
+          return false;
+        }
+      }
+    }
+
+    // Capture piece
+    if (piece_seen) {
+      board->grid[piece_cord.y][piece_cord.x] = PIECE_EMPTY;
+    }
+  }
+
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
   board->grid[move.from.y][move.from.x] = PIECE_EMPTY;
