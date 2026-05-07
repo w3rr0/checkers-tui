@@ -79,6 +79,14 @@ void print_board(const Board *board) {
          cord.y < BOARD_SIZE;
 }
 
+void _update_counter_after_capture(Board *board) {
+  if (board->white_turn) {
+    board->black_pieces--;
+  } else {
+    board->white_pieces--;
+  }
+}
+
 bool execute_move(Board *board, Move move) {
   // Check voordinates
   if (!_is_on_board(move.from) || !_is_on_board(move.to)) {
@@ -137,6 +145,7 @@ bool execute_move(Board *board, Move move) {
 
     // capturing successful
     board->grid[mid_y][mid_x] = PIECE_EMPTY;
+    _update_counter_after_capture(board);
   }
 
   if (actor.type == QUEEN) {
@@ -166,6 +175,7 @@ bool execute_move(Board *board, Move move) {
     // Capture piece
     if (piece_seen) {
       board->grid[piece_cord.y][piece_cord.x] = PIECE_EMPTY;
+      _update_counter_after_capture(board);
     }
   }
 
