@@ -108,19 +108,23 @@ bool execute_move(Board *board, Move move) {
   if (dx != dy) {
     return false;
   }
-  if (dx != 1 && dx != 2) { // 1 -> regular move, 2 -> capture pawn
+  if (target.type == PAWN && dx != 1 &&
+      dx != 2) { // 1 -> regular move, 2 -> capture pawn
     return false;
   }
 
   // direction of movement
-  if (actor.color == WHITE && move.from.y >= move.to.y) {
-    return false;
-  }
-  if (actor.color == BLACK && move.from.y <= move.to.y) {
-    return false;
+  if (actor.type == PAWN) {
+
+    if (actor.color == WHITE && move.from.y >= move.to.y) {
+      return false;
+    }
+    if (actor.color == BLACK && move.from.y <= move.to.y) {
+      return false;
+    }
   }
 
-  if (dx == 2) {
+  if (actor.type == PAWN && dx == 2) {
     int mid_x = (move.from.x + move.to.x) / 2;
     int mid_y = (move.from.y + move.to.y) / 2;
     auto mid_piece = board->grid[mid_y][mid_x];
