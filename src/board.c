@@ -6,8 +6,10 @@
 
 void init_board(Board *board) {
   board->white_turn = true;
-  for (int y = 0; y < BOARD_SIZE; y++) {
-    for (int x = 0; x < BOARD_SIZE; x++) {
+  board->white_pieces = STARTING_PIECES;
+  board->black_pieces = STARTING_PIECES;
+  for (int y = 0; y < BOARD_SIZE; ++y) {
+    for (int x = 0; x < BOARD_SIZE; ++x) {
       board->grid[y][x] = PIECE_EMPTY;
       if ((x + y) % 2 != 0) {
         if (y < 3) {
@@ -22,14 +24,14 @@ void init_board(Board *board) {
 
 void print_board(const Board *board) {
   printf("\n   ");
-  for (int i = 0; i < BOARD_SIZE; i++) {
+  for (int i = 0; i < BOARD_SIZE; ++i) {
     printf(" %c ", 'A' + i);
   }
   printf("\n");
 
-  for (int y = 0; y < BOARD_SIZE; y++) {
+  for (int y = 0; y < BOARD_SIZE; ++y) {
     printf(" %d ", y + 1);
-    for (int x = 0; x < BOARD_SIZE; x++) {
+    for (int x = 0; x < BOARD_SIZE; ++x) {
       if ((x + y) % 2 == 0) { // black square
         printf("\033[48;5;250m");
       } else { // white square

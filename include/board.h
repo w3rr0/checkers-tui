@@ -7,10 +7,13 @@
 #include "pawn.h"
 
 constexpr uint8_t BOARD_SIZE = 8;
+constexpr uint8_t STARTING_PIECES = 12;
 
 typedef struct {
   Piece grid[BOARD_SIZE][BOARD_SIZE];
   bool white_turn;
+  uint8_t white_pieces;
+  uint8_t black_pieces;
 } Board;
 
 typedef struct {
