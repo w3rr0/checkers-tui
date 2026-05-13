@@ -68,9 +68,12 @@ int main(int argc, char *argv[]) {
   sem_t *opp_sem = is_white ? sem_black : sem_white;
 
   while (true) {
+    printf("Turn: %s (You are %s)\n",
+           shared_board->white_turn ? "WHITE" : "BLACK",
+           is_white ? "WHITE" : "BLACK");
     printf("Waiting for opponent...\n");
     sem_wait(my_sem);
-    printf("\033[2J\033[H"); // Clear screen for better UX
+    printf("\033[2J\033[H"); // Clear screen
 
     print_board(shared_board);
 
