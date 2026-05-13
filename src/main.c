@@ -58,6 +58,10 @@ int main(int argc, char *argv[]) {
     sem_white = sem_open(SEM_WHITE, 0);
     sem_black = sem_open(SEM_BLACK, 0);
     printf("Joined the game as black player.\n");
+
+    // Show board - black
+    printf("\033[2J\033[H");
+    print_board(shared_board);
   }
 
   sem_t *my_sem = is_white ? sem_white : sem_black;
