@@ -1,5 +1,6 @@
 #include "board.h"
 #include "pawn.h"
+#include "theme.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,9 +34,9 @@ void print_board(const Board *board) {
     printf(" %d ", y + 1);
     for (int x = 0; x < BOARD_SIZE; ++x) {
       if ((x + y) % 2 == 0) { // black square
-        printf("\033[48;5;250m");
+        printf("%s", black_square);
       } else { // white square
-        printf("\033[48;5;235m");
+        printf("%s", white_square);
       }
 
       char *color_code;

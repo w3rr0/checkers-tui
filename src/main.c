@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "board.h"
+#include "theme.h"
 
 #define SHM_NAME "/checkers_shm_board"
 #define SEM_WHITE "/checkers_sem_white"
@@ -30,7 +31,7 @@ int main(int argc, char *argv[]) {
   sem_t *sem_black;
 
   if (is_white) {
-    // White is the "server" - it resets the shared memory and semaphores
+    // White resets the shared memory and semaphores
     shm_unlink(SHM_NAME);
     sem_unlink(SEM_WHITE);
     sem_unlink(SEM_BLACK);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
     // Black joins an existing game
     shm_fd = shm_open(SHM_NAME, O_RDWR, 0666);
     if (shm_fd == -1) {
-      printf("No game found! Please start the white player first.\n");
+      printf("No game found! Please start the white player first\n");
       return 1;
     }
     shared_board = mmap(NULL, sizeof(Board), PROT_READ | PROT_WRITE, MAP_SHARED,
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]) {
 
     sem_white = sem_open(SEM_WHITE, 0);
     sem_black = sem_open(SEM_BLACK, 0);
-    printf("Joined the game as black player.\n");
+    printf("Joined the game as black player\n");
 
     // Show board - black
     printf("\033[2J\033[H");
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (winner) {
-      sem_post(opp_sem); // Release opponent so they can see they lost
+      sem_post(opp_sem); // opponent can see they lost
       break;
     }
 
@@ -102,11 +103,11 @@ int main(int argc, char *argv[]) {
       if (execute_move(shared_board, m)) {
         break;
       }
-      printf("\033[31mWrong move! Please try again\033[0m\n");
+      printf("%sWrong move! Please try again%s\n", red_color_code, reset_color);
     }
 
-    // Pokaż planszę po wykonaniu swojego ruchu
-    printf("\033[2J\033[H");
+    // Show board after own move
+    printf("%s", clear_screen);
     print_board(shared_board);
 
     // Pass turn to opponent
