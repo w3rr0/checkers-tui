@@ -98,6 +98,10 @@ int main(int argc, char *argv[]) {
       printf("\033[31mWrong move! Please try again\033[0m\n");
     }
 
+    // Pokaż planszę po wykonaniu swojego ruchu
+    printf("\033[2J\033[H");
+    print_board(shared_board);
+
     // Pass turn to opponent
     sem_post(opp_sem);
   }
