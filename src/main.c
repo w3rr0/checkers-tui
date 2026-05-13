@@ -64,9 +64,7 @@ int main(int argc, char *argv[]) {
   sem_t *opp_sem = is_white ? sem_black : sem_white;
 
   while (true) {
-    if (!is_white && shared_board->white_pieces == STARTING_PIECES && shared_board->black_pieces == STARTING_PIECES && shared_board->white_turn) {
-         printf("Waiting for white to start...\n");
-    }
+    printf("Waiting for opponent...\n");
     sem_wait(my_sem);
     printf("\033[2J\033[H"); // Clear screen for better UX
 
@@ -122,7 +120,7 @@ Move get_user_move() {
   char col_from, col_to;
   int row_from, row_to;
 
-  printf("Enter your move (e.g. A3 B4): ");
+  printf("Enter your move: ");
 
   while (true) {
     int assigned = scanf(" %c%d %c%d", &col_from, &row_from, &col_to, &row_to);
