@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
 
 #include "pawn.h"
 
@@ -14,6 +15,12 @@ typedef struct {
   bool white_turn;
   uint8_t white_pieces;
   uint8_t black_pieces;
+  
+  time_t start_time;
+  uint32_t total_moves;
+  bool disconnected;
+  bool game_over;
+  bool timeout;
 } Board;
 
 typedef struct {
