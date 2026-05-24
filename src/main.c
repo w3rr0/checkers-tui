@@ -23,7 +23,23 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  bool is_white = strcmp(argv[1], "white") == 0;
+  // Signal handler registration
+  // SIGINT and SIGTERM
+  struct sigaction sa;
+  sa.sa_handler = handle_signal;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = 0;
+  sigaction(SIGINT, &sa, nullptr);
+  sigaction(SIGTERM, &sa, nullptr);
+
+  // SIGALRM
+  struct sigaction sa_alrm;
+  sa_alrm.sa_handler = handle_sigalrm;
+  sigemptyset(&sa_alrm.sa_mask);
+  sa_alrm.sa_flags = 0;
+  sigaction(SIGALRM, &sa_alrm, nullptr);
+
+  const bool is_white = strcmp(argv[1], "white") == 0;
 
   int shm_fd;
   Board *shared_board;
