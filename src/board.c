@@ -188,6 +188,7 @@ bool execute_move(Board *board, Move move) {
   // Execute move
   board->grid[move.to.y][move.to.x] = actor;
   board->grid[move.from.y][move.from.x] = PIECE_EMPTY;
+  board->total_moves++;
 
   // check for queen trannformation
   if (actor.type == PAWN) {
