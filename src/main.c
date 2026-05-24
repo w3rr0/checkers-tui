@@ -1,10 +1,12 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <semaphore.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "board.h"
@@ -14,7 +16,14 @@
 #define SEM_WHITE "/checkers_sem_white"
 #define SEM_BLACK "/checkers_sem_black"
 
+// global variables for signal handler
+volatile sig_atomic_t keep_running = 1;
+Board *global_board = nullptr;
+sem_t *global_opp_sem = nullptr;
+
 Move get_user_move();
+void handle_signal(int sig);
+void handle_sigalrm(int sig);
 
 int main(int argc, char *argv[]) {
   if (argc != 2 ||
@@ -115,6 +124,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (winner) {
+      shared_board->game_over = true;
       sem_post(opp_sem); // opponent can see they lost
       break;
     }
@@ -122,13 +132,24 @@ int main(int argc, char *argv[]) {
     printf("Turn: %s (You are %s)\n",
            shared_board->white_turn ? "WHITE" : "BLACK",
            is_white ? "WHITE" : "BLACK");
+    printf("You have 15 seconds for move!\n");
+    alarm(15);
 
-    while (true) {
-      Move m = get_user_move();
+    while (keep_running) {
+      const Move m = get_user_move();
+      if (!keep_running || shared_board->disconnected || shared_board->timeout) {
+        break;
+      }
       if (execute_move(shared_board, m)) {
         break;
       }
       printf("%sWrong move! Please try again%s\n", red_color_code, reset_color);
+    }
+    
+    alarm(0);
+    
+    if (!keep_running || shared_board->disconnected || shared_board->timeout) {
+      break;
     }
 
     // Show board after own move
@@ -138,6 +159,9 @@ int main(int argc, char *argv[]) {
     // Pass turn to opponent
     sem_post(opp_sem);
   }
+
+  // Show stats after loop
+  print_statistics(shared_board);
 
   munmap(shared_board, sizeof(Board));
   close(shm_fd);
@@ -158,15 +182,24 @@ Move get_user_move() {
   int row_from, row_to;
 
   printf("Enter your move: ");
+  fflush(stdout);
 
-  while (true) {
+  while (keep_running) {
     int assigned = scanf(" %c%d %c%d", &col_from, &row_from, &col_to, &row_to);
+    
+    // if scanf was interrupted by a signal
+    if (!keep_running) {
+      break;
+    }
+
     if (assigned == 4) {
       break;
     }
     printf("\033[31mWrong format! Please enter correct move\033[0m\n");
 
-    while (getchar() != '\n')
+    // cleaning buffer
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF && keep_running)
       ;
   }
 
