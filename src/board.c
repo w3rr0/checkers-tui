@@ -94,7 +94,7 @@ void _update_counter_after_capture(Board *board) {
 }
 
 bool execute_move(Board *board, Move move) {
-  // Check voordinates
+  // Check coordinates
   if (!_is_on_board(move.from) || !_is_on_board(move.to)) {
     return false;
   }
