@@ -21,7 +21,15 @@
 
 ## Mechanizmy komunikacji międzyprocesowej i synchronizacji
 
-Program składa się z dwóch niezależnych procesów wymieniających informacje przez pamięć współdzieloną POSIX (tworzoną za pomocą funkcji `mmap` i `shm_open`). Najistotniejsza jest tutaj implementacja synchronizacji i obsługi nagłych zdarzeń.
+Program składa się z dwóch niezależnych procesów wymieniających między sobą informacje. Najistotniejsza jest tutaj implementacja współdzielenia stanu gry, synchronizacji tur oraz bezpiecznej obsługi nagłych zdarzeń.
+
+### Wykorzystanie pamięci współdzielonej POSIX
+
+Stan planszy (struktura `Board`) wymieniany jest między procesami bezpośrednio. Nie dochodzi tutaj do kopiowania informacji z procesu do procesu. Zamiast tego modyfikowany jest jeden, współdzielony fragment pamięci.
+
+* **Tworzenie i mapowanie**: Pierwszy gracz (biały) tworzy nazwany obiekt w pamięci operacyjnej wywołaniem `shm_open` i alokuje wymagany rozmiar funkcją `ftruncate`. Następnie wywołuje `mmap` z flagą `MAP_SHARED`, która sprawia, że przestrzeń ta staje się przestrzenią współdzieloną między procesami.
+* **Dołączanie**: Drugi gracz (czarny) otwiera istniejący już obiekt (`shm_open` bez flagi tworzenia) i również wykonuje `mmap`. W tym momencie oba procesy posługują się wskaźnikami prowadzącymi do tych samych fizycznych obszarów w pamięci.
+* **Zwalnianie zasobów**: Po zakończeniu rozgrywki każdy proces odmapowuje segment z własnej pamięci wirtualnej (`munmap` oraz `close`). Dodatkowo na samym końcu biały gracz woła `shm_unlink` usuwając nazwany obiekt pamięci całkowicie z systemu.
 
 ### Wykorzystanie semaforów POSIX
 
@@ -34,7 +42,7 @@ Mechanizm działania:
 * Ponieważ semafor białych zaczyna z wartością 1, proces białych wykonuje się od razu, podczas gdy czarne oczekują na `sem_wait`.
 * Po zweryfikowaniu poprawnego ruchu na planszy i wyświetleniu zmian na ekranie, tura się kończy, a program wywołuje funkcję `sem_post(opp_sem)`. Podbija to wartość semafora przeciwnika, odblokowując jego proces.
 
-### Wykorzystanie sygnałów (Signals)
+### Wykorzystanie sygnałów
 
 Program w sposób celowy modyfikuje standardową obsługę sygnałów systemowych w celu uniknięcia zawieszeń, zabezpieczenia przed zakleszczeniami i egzekwowania reguł gry (np. czasu na ruch).
 
