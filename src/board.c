@@ -124,7 +124,7 @@ bool execute_move(Board *board, Move move) {
   if (dx != dy) {
     return false;
   }
-  if (target.type == PAWN && dx != 1 &&
+  if (actor.type == PAWN && dx != 1 &&
       dx != 2) { // 1 -> regular move, 2 -> capture pawn
     return false;
   }
