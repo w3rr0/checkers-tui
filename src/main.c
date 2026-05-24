@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
   }
 
   return 0;
-}
+} // MAIN
 
 Move get_user_move() {
   char col_from, col_to;
