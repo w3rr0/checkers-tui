@@ -93,6 +93,12 @@ int main(int argc, char *argv[]) {
            is_white ? "WHITE" : "BLACK");
     printf("Waiting for opponent...\n");
     sem_wait(my_sem);
+    
+    // if the game ends while waiting
+    if (!keep_running || shared_board->disconnected || shared_board->game_over) {
+      break;
+    }
+
     printf("\033[2J\033[H"); // Clear screen
 
     print_board(shared_board);
