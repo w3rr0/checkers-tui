@@ -84,7 +84,10 @@ int main(int argc, char *argv[]) {
   sem_t *my_sem = is_white ? sem_white : sem_black;
   sem_t *opp_sem = is_white ? sem_black : sem_white;
 
-  while (true) {
+  global_board = shared_board;
+  global_opp_sem = opp_sem;
+
+  while (keep_running && !shared_board->game_over && !shared_board->disconnected) {
     printf("Turn: %s (You are %s)\n",
            shared_board->white_turn ? "WHITE" : "BLACK",
            is_white ? "WHITE" : "BLACK");
