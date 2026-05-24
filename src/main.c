@@ -148,3 +148,27 @@ Move get_user_move() {
   return (Move){.from = {.x = toupper(col_from) - 'A', .y = row_from - 1},
                 .to = {.x = toupper(col_to) - 'A', .y = row_to - 1}};
 }
+
+void handle_signal(int sig) {
+  (void)sig; // suppress unused warning
+  keep_running = 0;
+  if (global_board) {
+    global_board->disconnected = true;
+    global_board->game_over = true;
+  }
+  if (global_opp_sem) {
+    sem_post(global_opp_sem);
+  }
+}
+
+void handle_sigalrm(int sig) {
+  (void)sig; // suppress unused warning
+  keep_running = 0;
+  if (global_board) {
+    global_board->timeout = true;
+    global_board->game_over = true;
+  }
+  if (global_opp_sem) {
+    sem_post(global_opp_sem);
+  }
+}
