@@ -9,6 +9,11 @@ void init_board(Board *board) {
   board->white_turn = true;
   board->white_pieces = STARTING_PIECES;
   board->black_pieces = STARTING_PIECES;
+  board->start_time = time(nullptr);
+  board->total_moves = 0;
+  board->disconnected = false;
+  board->game_over = false;
+  board->timeout = false;
   for (int y = 0; y < BOARD_SIZE; ++y) {
     for (int x = 0; x < BOARD_SIZE; ++x) {
       board->grid[y][x] = PIECE_EMPTY;
