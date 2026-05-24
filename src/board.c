@@ -80,6 +80,31 @@ void print_board(const Board *board) {
   }
 }
 
+void print_statistics(const Board *board) {
+  printf("\n   GAME STATS\n");
+  const time_t end_time = time(nullptr);
+  const double diff = difftime(end_time, board->start_time);
+  const int minutes = (int)diff / 60;
+  const int seconds = (int)diff % 60;
+
+  printf("Game time: %02d:%02d\n", minutes, seconds);
+  printf("Total number of moves: %u\n", board->total_moves);
+  printf("Captured pieces - White: %d, Black: %d\n",
+         STARTING_PIECES - board->white_pieces,
+         STARTING_PIECES - board->black_pieces);
+
+  if (board->timeout) {
+    printf("END: Time is up! Player %s loses by time out\n", board->white_turn ? "WHITE" : "BLACK");
+  } else if (board->disconnected) {
+    printf("END: The game was interrupted by one of the players\n");
+  } else if (board->white_pieces == 0) {
+    printf("END: Black victory!\n");
+  } else if (board->black_pieces == 0) {
+    printf("END: White victory!\n");
+  }
+  printf("\n\n");
+}
+
 [[nodiscard]] bool _is_on_board(Coordinate cord) {
   return cord.x >= 0 && cord.x < BOARD_SIZE && cord.y >= 0 &&
          cord.y < BOARD_SIZE;
